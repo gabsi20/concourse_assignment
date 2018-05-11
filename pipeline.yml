@@ -4,7 +4,7 @@ resources:
   - name: git-repository
     type: git
     source: 
-      uri: https://gitlab.com/gabsi20/concourse_assignment.git
+      uri: https://github.com/gabsi20/concourse_assignment.git
 
 
 jobs: 
@@ -15,52 +15,111 @@ jobs:
     - task: lint
       config:
         platform: linux
-
         image_resource:
           type: docker-image
           source:
             repository: ruby
             tag: '2.5'
-        
         inputs:
           - name: git-repository
-        
         run:
           path: echo
           args: 
-            - 'hello world'
+            - 'linting'
+  - name: unit-test
+    plan: 
+    - get: git-repository
+      trigger: true
+    - task: unit-test
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ruby
+            tag: '2.5'
+        inputs:
+          - name: git-repository
+        run:
+          path: echo
+          args: 
+            - 'unittest'
+
+  - name: acceptance-test
+    plan: 
+    - get: git-repository
+      passed: [unit-test, security-scan, dependency-check, lint]
+      trigger: true
+    - task: acceptance-test
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ruby
+            tag: '2.5'
+        inputs:
+          - name: git-repository
+        run:
+          path: echo
+          args: 
+            - 'acceptancetest'   
+ 
+  - name: security-scan
+    plan: 
+    - get: git-repository
+      trigger: true
+    - task: security-scan
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ruby
+            tag: '2.5'
+        inputs:
+          - name: git-repository
+        run:
+          path: echo
+          args: 
+            - 'security scan'  
+
+  - name: dependency-check
+    plan: 
+    - get: git-repository
+      trigger: true
+    - task: dependency-check
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ruby
+            tag: '2.5'
+        inputs:
+          - name: git-repository
+        run:
+          path: echo
+          args: 
+            - 'dependency-check'  
+
   - name: deploy
     plan:
       - get: git-repository
-        passed: [lint]
+        passed: [acceptance-test]
         trigger: true
       - task: deploy
         config:
           platform: linux
-
           image_resource:
             type: docker-image
             source:
-              repository: concourse/bosh-cli
-          
+              repository: ruby
+              tag: '2.5'
           inputs:
             - name: git-repository
-
-          params:
-            HEROKU_EMAIL: ((heroku_email))
-            HEROKU_TOKEN: ((heroku_token))
-
           run:
-            path: bash
-            dir: git-repository
-            args:
-              - -exc
-              - |
-                cat > /root/.netrc <<EOF
-                machine git.heroku.com
-                  login $HEROKU_EMAIL
-                  password $HEROKU_TOKEN
-                EOF
-                git push https://git.heroku.com/councourse-test-alex.git master:refs/heads/master
-
+            path: echo
+            args: 
+              - 'deploy'  
 
