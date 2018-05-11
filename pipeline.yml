@@ -7,7 +7,7 @@ resources:
       uri: https://github.com/gabsi20/concourse_assignment.git
 
 
-jobs: 
+jobs:
   - name: lint
     plan: 
     - get: git-repository
@@ -23,9 +23,11 @@ jobs:
         inputs:
           - name: git-repository
         run:
-          path: echo
-          args: 
-            - 'linting'
+          path: sh
+          dir: git-repository
+          args:
+            - "./bin/pipeline/lint"
+
   - name: unit-test
     plan: 
     - get: git-repository
@@ -41,9 +43,10 @@ jobs:
         inputs:
           - name: git-repository
         run:
-          path: echo
+          path: sh
+          dir: git-repository
           args: 
-            - 'unittest'
+            - './bin/pipeline/unit-test'
 
   - name: acceptance-test
     plan: 
@@ -61,9 +64,10 @@ jobs:
         inputs:
           - name: git-repository
         run:
-          path: echo
+          path: sh
+          dir: git-repository
           args: 
-            - 'acceptancetest'   
+            - './bin/pipeline/acceptance-test'   
  
   - name: security-scan
     plan: 
@@ -80,9 +84,10 @@ jobs:
         inputs:
           - name: git-repository
         run:
-          path: echo
+          path: sh
+          dir: git-repository
           args: 
-            - 'security scan'  
+            - './bin/pipeline/security-scan'  
 
   - name: dependency-check
     plan: 
@@ -99,9 +104,10 @@ jobs:
         inputs:
           - name: git-repository
         run:
-          path: echo
+          path: sh
+          dir: git-repository
           args: 
-            - 'dependency-check'  
+            - './bin/pipeline/dependency-check'  
 
   - name: deploy
     plan:

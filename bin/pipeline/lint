@@ -1,0 +1,6 @@
+# /bin/bash
+
+set -e
+
+gem install rubocop-rails
+rubocop
