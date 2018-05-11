@@ -1,10 +1,24 @@
 ---
 
+resource_types:
+  - name: http-api
+    type: docker-image
+    source:
+      repository: aequitas/http-api-resource
+      tag: latest
+
 resources:
   - name: git-repository
     type: git
     source: 
       uri: https://github.com/gabsi20/concourse_assignment.git
+  - name: slack
+    type: http-api
+    source:
+      uri:  https://hooks.slack.com/services/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 
+      method: POST
+      json:
+        text: "Your App has been deployed" 
 
 
 jobs:
@@ -127,5 +141,6 @@ jobs:
           run:
             path: echo
             args: 
-              - 'deploy'  
+              - 'deploy'
+      - put: slack  
 
