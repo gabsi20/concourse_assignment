@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Vorname:</strong>
+  <%= @loser.vorname %>
+</p>
+
+<p>
+  <strong>Nachname:</strong>
+  <%= @loser.nachname %>
+</p>
+
+<%= link_to 'Edit', edit_loser_path(@loser) %> |
+<%= link_to 'Back', losers_path %>
