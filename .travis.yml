@@ -1,3 +1,24 @@
 language: ruby
+cache: bundler
 rvm:
- - 2.2
+ - 2.4
+addons:
+  apt:
+    update: true
+jobs:
+  include:
+    - stage: infra
+      script: bundle exec bundler-audit
+    - #
+      script: bundle exec brakeman
+    - #
+      script: bundle exec rubocop
+    - #
+      script: bundle exec rake test test/models
+    - stage: test
+      script: bundle exec rake test test/controllers
+
+notifications:
+  slack: concourse-gabriel:ZFZE6YsAnBoXBZJsqdlYy1LJ
+
+
